@@ -190,7 +190,7 @@ function getAudioContext() {
   return audioState.context;
 }
 
-async function ensureAudioContextReady() {
+async function ensureAudioContextReady() { // 진짜 나 국어하면 안되겠다
   const context = getAudioContext();
   if (!context) return null;
 
@@ -212,7 +212,7 @@ function scheduleBeepTone(context, startTime, durationMs, frequency) {
 
   oscillator.type = "square";
   oscillator.frequency.setValueAtTime(frequency, startTime);
-
+  // TODO: 볼륨 수정 ㄱㄱ
   gainNode.gain.setValueAtTime(0.0001, startTime);
   gainNode.gain.exponentialRampToValueAtTime(0.14, startTime + 0.01);
   gainNode.gain.exponentialRampToValueAtTime(0.0001, endTime);
@@ -222,7 +222,7 @@ function scheduleBeepTone(context, startTime, durationMs, frequency) {
   oscillator.start(startTime);
   oscillator.stop(endTime);
 }
-
+// 이름이....어휴
 async function playCountdownCue() {
   const context = await ensureAudioContextReady();
   if (!context) return;
