@@ -6,6 +6,10 @@ const CONFIG = { // AI야 고~~~맙다 정리를 이렇게~나 잘해해줭~
   DEFAULT_COUNTDOWN_SECONDS: 3,
   MIN_COUNTDOWN_SECONDS: 0,
   MAX_COUNTDOWN_SECONDS: 10,
+  COUNTDOWN_BEEP_FREQUENCY: 1046.5,
+  COUNTDOWN_BEEP_DURATION_MS: 900,
+  COUNTDOWN_BEEP_GAP_MS: 120,
+  COUNTDOWN_BEEP_REPEAT: 1,
   MIN_LAYOUT: 2,
   MAX_LAYOUT: 10,
   MAX_UNDO_STACK: 40,
@@ -66,6 +70,9 @@ let state = {
 };
 
 let isCountingDown = false;
+const audioState = {
+  context: null,
+};
 
 function clamp(v, min, max) {
   return Math.min(max, Math.max(min, v));
@@ -172,6 +179,66 @@ function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function getAudioContext() {
+  const AudioContextClass = globalThis.AudioContext || globalThis.webkitAudioContext;
+  if (!AudioContextClass) return null;
+
+  if (!audioState.context) {
+    audioState.context = new AudioContextClass();
+  }
+
+  return audioState.context;
+}
+
+async function ensureAudioContextReady() {
+  const context = getAudioContext();
+  if (!context) return null;
+
+  if (context.state === "suspended") {
+    try {
+      await context.resume();
+    } catch {
+      return null;
+    }
+  }
+
+  return context;
+}
+
+function scheduleBeepTone(context, startTime, durationMs, frequency) {
+  const oscillator = context.createOscillator();
+  const gainNode = context.createGain();
+  const endTime = startTime + (durationMs / 1000);
+
+  oscillator.type = "square";
+  oscillator.frequency.setValueAtTime(frequency, startTime);
+
+  gainNode.gain.setValueAtTime(0.0001, startTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.14, startTime + 0.01);
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, endTime);
+
+  oscillator.connect(gainNode);
+  gainNode.connect(context.destination);
+  oscillator.start(startTime);
+  oscillator.stop(endTime);
+}
+
+async function playCountdownCue() {
+  const context = await ensureAudioContextReady();
+  if (!context) return;
+
+  const startTime = context.currentTime + 0.01;
+  for (let i = 0; i < CONFIG.COUNTDOWN_BEEP_REPEAT; i++) {
+    const offsetSeconds = (CONFIG.COUNTDOWN_BEEP_GAP_MS / 1000) * i;
+    scheduleBeepTone(
+      context,
+      startTime + offsetSeconds,
+      CONFIG.COUNTDOWN_BEEP_DURATION_MS,
+      CONFIG.COUNTDOWN_BEEP_FREQUENCY,
+    );
+  }
+}
+
 function getMovableNames() {
   return state.seats.filter(s => s.name && !s.fixed).map(s => s.name);
 }
@@ -221,6 +288,7 @@ function setCountdownOverlayNumber(value) {
   DOM.countdownNumber.classList.remove("pop");
   void DOM.countdownNumber.offsetWidth;
   DOM.countdownNumber.classList.add("pop");
+  playCountdownCue();
 }
 
 async function runCountdown(seconds) {
