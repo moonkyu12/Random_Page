@@ -15,7 +15,7 @@ const CONFIG = { // AI야 고~~~맙다 정리를 이렇게~나 잘해해줭~
   MAX_UNDO_STACK: 40,
 };
 // 음.......안해ㅣ
-const MESSAGES = {
+const MESSAGES = { // 메세지들 있는거임요 이거중에 안뜨면 말해주던가
   BLOCKED_SEAT: "사용 불가 자리에는 이름을 추가할 수 없어요.",
   INPUT_NAME_PROMPT: "번 자리의 이름을 입력하세요:",
   EMPTY_INPUT: "이름을 입력해주세요.",
@@ -54,7 +54,7 @@ const DOM = {
   inputModal: document.getElementById("inputModal"),
   inputTitle: document.getElementById("inputTitle"),
   inputField: document.getElementById("inputField"),
-  inputOkBtn: document.getElementById("inputOkBtn"),
+  inputOkBtn: document.getElementById("inputOkBtn"), // 다시봐도 정리할생각이 안나네ㅋㅋ
   inputCancelBtn: document.getElementById("inputCancelBtn"),
   saveStateBtn: document.getElementById("saveStateBtn"),
   loadStateBtn: document.getElementById("loadStateBtn"),
@@ -81,7 +81,7 @@ const audioState = {
 function clamp(v, min, max) {
   return Math.min(max, Math.max(min, v));
 }
-
+// 숫자 입력값 갓쳐토기
 function getNumberInputValue(input) {
   const parsed = parseFloat(input.value);
   if (Number.isFinite(parsed)) return parsed;
@@ -472,6 +472,10 @@ async function handleDrawWithCountdown() {
     setStatus(MESSAGES.NO_NAMES, "warn");
     return;
   }
+
+  /**
+   * ????????????????????????????????????? 뭐요
+   */
 
   const seconds = getCountdownSeconds();
   if (seconds <= 0) {
