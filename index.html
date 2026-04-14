@@ -54,7 +54,7 @@
           <button id="undoBtn" class="btn nav-btn undo-btn" title="뒤로가기">←</button>
           <button id="redoBtn" class="btn nav-btn redo-btn" title="앞으로가기">→</button>
           <button id="clearAllBtn" class="btn danger">전체 지우기</button>
-          <button id="saveImageBtn" class="btn neutral">이미지 저장</button>
+          <!-- <button id="saveImageBtn" class="btn neutral">이미지 저장</button> -->
         </div>
         <div class="buttons-right">
           <div class="countdown-wrap">
@@ -77,7 +77,8 @@
 
     <div class="app-content">
       <section class="card board-card">
-      <div class="teacher-desk">앞쪽 교탁</div>
+      <button id="toggleUiBtn" class="floating-toggle-btn" type="button" aria-pressed="false" aria-label="상단 제목과 버튼 영역 숨기기" title="상단 숨기기">▴</button>
+      <!-- <div class="teacher-desk">앞쪽 교탁</div> -->
       <div id="seatBoard" class="seat-board" aria-live="polite"></div>
       </section>
     </div>
@@ -114,19 +115,6 @@
     <article class="seat-card">
       <button type="button" class="seat-main">
         <span class="seat-number">1번 자리</span>
-        <div class="seat-figure" aria-hidden="true">
-          <svg viewBox="0 0 120 120">
-            <rect x="72" y="52" width="26" height="38" rx="6" fill="#2e466f" />
-            <rect x="58" y="70" width="44" height="9" rx="4.5" fill="#415f93" />
-            <rect x="74" y="88" width="7" height="18" rx="3.5" fill="#273b5c" />
-            <rect x="91" y="88" width="7" height="18" rx="3.5" fill="#273b5c" />
-            <circle cx="45" cy="37" r="12" fill="#f5c8a3" />
-            <path d="M34 53c0-7 6-12 13-12h4c7 0 13 5 13 12v10H34z" fill="#4f88d1" />
-            <path d="M62 70H41c-5 0-9 4-9 9v6h30z" fill="#394f78" />
-            <rect x="34" y="84" width="8" height="17" rx="3" fill="#2f4265" />
-            <rect x="48" y="84" width="8" height="17" rx="3" fill="#2f4265" />
-          </svg>
-        </div>
         <span class="seat-name">빈자리</span>
       </button>
       <div class="seat-tools">
@@ -137,7 +125,7 @@
     </article>
   </template>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> -->
   <script src="script.js"></script>
 </body>
 </html>

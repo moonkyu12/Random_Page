@@ -3,7 +3,7 @@
 const CONFIG = { // AI야 고~~~맙다 정리를 이렇게~나 잘해해줭~
   DEFAULT_ROWS: 5,
   DEFAULT_COLS: 5,
-  DEFAULT_COUNTDOWN_SECONDS: 3,
+  DEFAULT_COUNTDOWN_SECONDS: 5,
   MIN_COUNTDOWN_SECONDS: 0,
   MAX_COUNTDOWN_SECONDS: 10,
   COUNTDOWN_BEEP_FREQUENCY: 1046.5,
@@ -31,6 +31,9 @@ const MESSAGES = {
 };
 // 내가 이걸 왜한거지? 왜 정리를 한걸까 ㅈ머ㅐㅠ매ㅕ누ㅑㅔㅁ휴매ㅠ냐ㅐ ㅁ잘 ㅠㅕㅁ9ㅑㅐㅓ 헤ㅐㅑ뉴[ㅕㅑㅐㅔㅁ].
 const DOM = {
+  app: document.querySelector(".app"),
+  appHeader: document.querySelector(".app-header"),
+  quickActions: document.querySelector(".quick-actions"),
   rowsInput: document.getElementById("rowsInput"),
   colsInput: document.getElementById("colsInput"),
   drawBtn: document.getElementById("drawBtn"),
@@ -38,7 +41,7 @@ const DOM = {
   undoBtn: document.getElementById("undoBtn"),
   redoBtn: document.getElementById("redoBtn"),
   clearAllBtn: document.getElementById("clearAllBtn"),
-  saveImageBtn: document.getElementById("saveImageBtn"),
+  // saveImageBtn: document.getElementById("saveImageBtn"),
   txtFileInput: document.getElementById("txtFileInput"),// 와.....ㅆ...이건 진짜 뭐지?
   stateFileInput: document.getElementById("stateFileInput"), // AI한테 하길잘했다...
   statusBox: document.getElementById("statusBox"),// 내가 했으면 오곡중 하나인 잣이 될뻔했군
@@ -59,6 +62,7 @@ const DOM = {
   countdownOverlay: document.getElementById("countdownOverlay"),
   countdownNumber: document.getElementById("countdownNumber"),
   stepperButtons: document.querySelectorAll(".stepper-btn"),
+  toggleUiBtn: document.getElementById("toggleUiBtn"),
 };
 
 let state = {
@@ -579,6 +583,29 @@ function refreshUI() {
   renderBoard();
 }
 
+function syncToggleUiButton() {
+  const collapsed = DOM.app?.classList.contains("ui-collapsed");
+  if (!DOM.toggleUiBtn) return;
+
+  DOM.toggleUiBtn.textContent = collapsed ? "▾" : "▴";
+  DOM.toggleUiBtn.setAttribute("aria-pressed", collapsed ? "true" : "false");
+  DOM.toggleUiBtn.setAttribute(
+    "aria-label",
+    collapsed ? "상단 제목과 버튼 영역 보이기" : "상단 제목과 버튼 영역 숨기기",
+  );
+  DOM.toggleUiBtn.title = collapsed ? "상단 보이기" : "상단 숨기기";
+}
+
+function toggleTopUi() {
+  if (!DOM.app || !DOM.toggleUiBtn) return;
+
+  DOM.app.classList.toggle("ui-collapsed");
+  const collapsed = DOM.app.classList.contains("ui-collapsed");
+  syncToggleUiButton();
+  setStatus(collapsed ? "상단 제목과 버튼 영역을 숨겼어요." : "상단 제목과 버튼 영역을 다시 보여줘요.", "success");
+}
+
+/*
 function saveImage() { // function FUCKYOU
   const board = document.querySelector(".board-card");
   if (!board) {
@@ -607,6 +634,7 @@ function saveImage() { // function FUCKYOU
       setStatus(MESSAGES.IMAGE_GENERATION_ERROR, "error");
     });
 }
+*/
 
 function handleTxtUpload(e) {
   const file = e.target.files?.[0];
@@ -741,7 +769,7 @@ function attachEvents() {
   DOM.undoBtn.addEventListener("click", undoLast);
   DOM.redoBtn.addEventListener("click", redoLast);
   DOM.clearAllBtn.addEventListener("click", clearAll);
-  DOM.saveImageBtn.addEventListener("click", saveImage);
+  // DOM.saveImageBtn.addEventListener("click", saveImage);
 
   DOM.loadTxtBtn.addEventListener("click", () => DOM.txtFileInput.click());
   DOM.txtFileInput.addEventListener("change", handleTxtUpload);
@@ -764,6 +792,8 @@ function attachEvents() {
     });
   });
 
+  DOM.toggleUiBtn?.addEventListener("click", toggleTopUi);
+
   document.addEventListener("keydown", e => {
     if (isCountingDown) return;
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
@@ -784,6 +814,7 @@ function init() {
   DOM.colsInput.value = CONFIG.DEFAULT_COLS;
   DOM.countdownInput.value = CONFIG.DEFAULT_COUNTDOWN_SECONDS;
   refreshUI();
+  syncToggleUiButton();
   setStatus("준비 완료", "idle");
   attachEvents();
 }
